@@ -35,6 +35,79 @@ public class MyDailyBeatAPI {
 			.getDatastoreService();
 	public static BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
 
+	@ApiMethod(name = "groups.createmasterlist", path="groups/createmasterlist", httpMethod = HttpMethod.GET)
+	public BooleanResponse createMasterList() {
+		Query q = new Query("GroupsList");
+		if (datastore.prepare(q).asSingleEntity() == null) {
+			Entity s = new Entity("GroupsList");
+			ArrayList<Group> groups = new ArrayList<Group>();
+			s.setProperty("list", groups);
+			s.setProperty("max_id", 1);
+			datastore.put(s);
+		}
+		
+		return BooleanResponse.createResponse(true);
+	}
+	
+	@ApiMethod(name = "users.joingroup", path = "users/groups/join", httpMethod = HttpMethod.POST)
+	public BooleanResponse joinGroup(JoinGroupPostObject postObj) {
+		Query q = new Query("StandardUser").addFilter("screenName",
+				Query.FilterOperator.EQUAL, postObj.screenName).addFilter("password",
+				Query.FilterOperator.EQUAL, postObj.password);
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity s = results.get(0);
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
+		ArrayList<Integer> groups = (ArrayList<Integer>) s.getProperty("groups");
+		
+		for (int i = 0 ; i < list.size() ; i++) {
+			if (list.get(i).groupName.equalsIgnoreCase(postObj.groupName)) {
+				groups.add(list.get(i).id);
+			}
+		}
+		
+		return BooleanResponse.createResponse(true);
+	}
+	
+	@ApiMethod(name="groups.create", path="groups/create", httpMethod = HttpMethod.POST)
+	public BooleanResponse createGroup(CreateGroupPostObject postObj) {
+		Query q = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q).asSingleEntity();
+		int max_id = ((Integer) groupsList.getProperty("max_id")).intValue();
+		Group.ID_START = max_id;
+		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
+		list.add(new Group(postObj.groupName, postObj.screenName));
+		return BooleanResponse.createResponse(true);
+		
+	}
+	
+	@ApiMethod(name="groups.get", path="groups/get", httpMethod=HttpMethod.GET)
+	public ArrayList<Group> getGroupsForUser(@Named("screen_name") String screenName,
+			@Named("password") String password) {
+		Query q = new Query("StandardUser").addFilter("screenName",
+				Query.FilterOperator.EQUAL, screenName).addFilter("password",
+				Query.FilterOperator.EQUAL, password);
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity s = results.get(0);
+		ArrayList<Integer> groups = (ArrayList<Integer>) s.getProperty("groups");
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
+		ArrayList<Group> subList = new ArrayList<Group>();
+		for (int i = 0 ; i < groups.size() ; i++) {
+			for (int j = 0 ; j < list.size() ; j++) {
+				if (list.get(j).id == groups.get(i)) {
+					subList.add(list.get(j));
+				}
+			}
+		}
+		
+		return subList;
+	}
+	
 	@ApiMethod(name = "users.standard.create", path = "users/register", httpMethod = HttpMethod.POST)
 	public BooleanResponse createStandardUser(VerveStandardUser info) {
 
@@ -49,6 +122,8 @@ public class MyDailyBeatAPI {
 		s.setProperty("birth_year", info.birth_year);
 		s.setProperty("md5key", Constants.generateMD5(info.email));
 		s.setProperty("verified", Boolean.FALSE);
+		ArrayList<Integer> groups = new ArrayList<Integer>();
+		s.setProperty("groups", groups);
 
 		try {
 

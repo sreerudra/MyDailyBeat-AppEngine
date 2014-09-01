@@ -1,5 +1,7 @@
 package com.verve.api;
 
+import java.util.ArrayList;
+
 public class VerveStandardUser {
 	
 
@@ -68,7 +70,6 @@ public class VerveStandardUser {
 	public void setBirth_year(long birth_year) {
 		this.birth_year = birth_year;
 	}
-
 
 	
 	

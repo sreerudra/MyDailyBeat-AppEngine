@@ -199,6 +199,31 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "mydailybeat.groups.get" : {
+      "path" : "groups/get",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getGroupsForUser",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "mydailybeat.users.prefs.volunteering.retrieve" : {
       "path" : "users/prefs/volunteering/retrieve",
       "httpMethod" : "GET",
@@ -249,14 +274,30 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.fling.save" : {
-      "path" : "users/prefs/fling/save",
+    "mydailybeat.users.joingroup" : {
+      "path" : "users/groups/join",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveFlingPrefs",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.joinGroup",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.prefs.volunteering.save" : {
+      "path" : "users/prefs/volunteering/save",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
@@ -290,14 +331,45 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.volunteering.save" : {
-      "path" : "users/prefs/volunteering/save",
+    "mydailybeat.groups.createmasterlist" : {
+      "path" : "groups/createmasterlist",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.createMasterList",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.prefs.fling.save" : {
+      "path" : "users/prefs/fling/save",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveFlingPrefs",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.groups.create" : {
+      "path" : "groups/create",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.createGroup",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
@@ -462,6 +534,63 @@
             "type" : "string"
           }
         }
+      },
+      "Group" : {
+        "id" : "Group",
+        "type" : "object",
+        "properties" : {
+          "groupName" : {
+            "type" : "string"
+          },
+          "adminScreenName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "GroupCollection" : {
+        "id" : "GroupCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Group"
+            }
+          }
+        }
+      },
+      "JoinGroupPostObject" : {
+        "id" : "JoinGroupPostObject",
+        "type" : "object",
+        "properties" : {
+          "groupName" : {
+            "type" : "string"
+          },
+          "screenName" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CreateGroupPostObject" : {
+        "id" : "CreateGroupPostObject",
+        "type" : "object",
+        "properties" : {
+          "groupName" : {
+            "type" : "string"
+          },
+          "screenName" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
       }
     },
     "methods" : {
@@ -522,6 +651,11 @@
           "$ref" : "StringResponse"
         }
       },
+      "com.verve.api.MyDailyBeatAPI.getGroupsForUser" : {
+        "response" : {
+          "$ref" : "GroupCollection"
+        }
+      },
       "com.verve.api.MyDailyBeatAPI.retrieveVolunteeringPrefs" : {
         "response" : {
           "$ref" : "CheckBoxPreference"
@@ -532,9 +666,17 @@
           "$ref" : "PrefsList"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.saveFlingPrefs" : {
+      "com.verve.api.MyDailyBeatAPI.joinGroup" : {
         "request" : {
-          "$ref" : "PrefsList"
+          "$ref" : "JoinGroupPostObject"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs" : {
+        "request" : {
+          "$ref" : "CheckBoxPreference"
         },
         "response" : {
           "$ref" : "BooleanResponse"
@@ -545,9 +687,22 @@
           "$ref" : "VerveStandardUser"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs" : {
+      "com.verve.api.MyDailyBeatAPI.createMasterList" : {
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.saveFlingPrefs" : {
         "request" : {
-          "$ref" : "CheckBoxPreference"
+          "$ref" : "PrefsList"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.createGroup" : {
+        "request" : {
+          "$ref" : "CreateGroupPostObject"
         },
         "response" : {
           "$ref" : "BooleanResponse"
