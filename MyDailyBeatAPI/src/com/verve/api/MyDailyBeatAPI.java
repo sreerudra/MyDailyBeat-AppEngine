@@ -40,9 +40,9 @@ public class MyDailyBeatAPI {
 		Query q = new Query("GroupsList");
 		if (datastore.prepare(q).asSingleEntity() == null) {
 			Entity s = new Entity("GroupsList");
-			ArrayList<Group> groups = new ArrayList<Group>();
+			ArrayList<EmbeddedEntity> groups = new ArrayList<EmbeddedEntity>();
 			s.setProperty("list", groups);
-			s.setProperty("max_id", 1);
+			s.setProperty("max_id", Group.ID_START);
 			datastore.put(s);
 		}
 		
@@ -59,14 +59,21 @@ public class MyDailyBeatAPI {
 		Entity s = results.get(0);
 		Query q2 = new Query("GroupsList");
 		Entity groupsList = datastore.prepare(q2).asSingleEntity();
-		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
 		ArrayList<Integer> groups = (ArrayList<Integer>) s.getProperty("groups");
 		
+		if (groups == null) {
+			groups = new ArrayList<Integer>();
+		}
+		
 		for (int i = 0 ; i < list.size() ; i++) {
-			if (list.get(i).groupName.equalsIgnoreCase(postObj.groupName)) {
-				groups.add(list.get(i).id);
+			if (((String) list.get(i).getProperty("groupName")).equalsIgnoreCase(postObj.groupName)) {
+				groups.add((int) (((Long) list.get(i).getProperty("id")).longValue()));
 			}
 		}
+		
+		s.setProperty("groups", groups);;
+		datastore.put(s);
 		
 		return BooleanResponse.createResponse(true);
 	}
@@ -75,11 +82,21 @@ public class MyDailyBeatAPI {
 	public BooleanResponse createGroup(CreateGroupPostObject postObj) {
 		Query q = new Query("GroupsList");
 		Entity groupsList = datastore.prepare(q).asSingleEntity();
-		int max_id = ((Integer) groupsList.getProperty("max_id")).intValue();
-		Group.ID_START = max_id;
-		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
-		list.add(new Group(postObj.groupName, postObj.screenName));
-		return BooleanResponse.createResponse(true);
+		Group.ID_START = (int) (((Long)groupsList.getProperty("max_id")).longValue());
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
+		if (list == null) {
+			list = new ArrayList<EmbeddedEntity>();
+			groupsList.setProperty("max_id", Group.ID_START);
+		}
+		Group g = new Group(postObj.groupName, postObj.screenName);
+		EmbeddedEntity newGroup = new EmbeddedEntity();
+		newGroup.setProperty("groupName", g.groupName);
+		newGroup.setProperty("adminScreenName", g.adminScreenName);
+		newGroup.setProperty("id", g.id);
+		list.add(newGroup);
+		groupsList.setProperty("list", list);
+		datastore.put(groupsList);
+		return this.joinGroup(new JoinGroupPostObject(postObj.groupName, postObj.screenName, postObj.password));
 		
 	}
 	
@@ -92,15 +109,18 @@ public class MyDailyBeatAPI {
 		List<Entity> results = datastore.prepare(q).asList(
 				FetchOptions.Builder.withDefaults());
 		Entity s = results.get(0);
-		ArrayList<Integer> groups = (ArrayList<Integer>) s.getProperty("groups");
+		ArrayList<Long> groups = (ArrayList<Long>) s.getProperty("groups");
 		Query q2 = new Query("GroupsList");
 		Entity groupsList = datastore.prepare(q2).asSingleEntity();
-		ArrayList<Group> list = (ArrayList<Group>) groupsList.getProperty("list");
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
 		ArrayList<Group> subList = new ArrayList<Group>();
 		for (int i = 0 ; i < groups.size() ; i++) {
 			for (int j = 0 ; j < list.size() ; j++) {
-				if (list.get(j).id == groups.get(i)) {
-					subList.add(list.get(j));
+				Long value1 = (Long) list.get(j).getProperty("id");
+				Long value2 = groups.get(i).longValue();
+				if ( value1.equals(value2)) {
+					Group g  = new Group((String) list.get(j).getProperty("groupName"),(String) list.get(j).getProperty("adminScreenName"),(int) (((Long) list.get(j).getProperty("id")).longValue()));
+					subList.add(g);
 				}
 			}
 		}
