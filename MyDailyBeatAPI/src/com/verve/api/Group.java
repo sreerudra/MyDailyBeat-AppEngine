@@ -9,13 +9,18 @@ public class Group {
 	public static int ID_START = 1;
 
 	public Group() {
-		id = ++ID_START;
 	}
 
 	public Group(String groupName, String adminScreenName) {
-		this();
+		id = ID_START++;
 		this.groupName = groupName;
 		this.adminScreenName = adminScreenName;
+	}
+
+	public Group(String groupName, String adminScreenName, int id) {
+		this.groupName = groupName;
+		this.adminScreenName = adminScreenName;
+		this.id = id;
 	}
 
 	public String getGroupName() {

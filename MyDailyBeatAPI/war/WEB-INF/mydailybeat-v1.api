@@ -306,31 +306,6 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.standard.getinfo" : {
-      "path" : "users/getInfo",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getUserInfo",
-      "request" : {
-        "parameters" : {
-          "screen_name" : {
-            "type" : "string",
-            "required" : true
-          },
-          "password" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "mydailybeat.groups.createmasterlist" : {
       "path" : "groups/createmasterlist",
       "httpMethod" : "GET",
@@ -357,6 +332,31 @@
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.standard.getinfo" : {
+      "path" : "users/getInfo",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getUserInfo",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -682,11 +682,6 @@
           "$ref" : "BooleanResponse"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.getUserInfo" : {
-        "response" : {
-          "$ref" : "VerveStandardUser"
-        }
-      },
       "com.verve.api.MyDailyBeatAPI.createMasterList" : {
         "response" : {
           "$ref" : "BooleanResponse"
@@ -698,6 +693,11 @@
         },
         "response" : {
           "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.getUserInfo" : {
+        "response" : {
+          "$ref" : "VerveStandardUser"
         }
       },
       "com.verve.api.MyDailyBeatAPI.createGroup" : {
