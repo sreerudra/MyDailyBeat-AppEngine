@@ -24,14 +24,14 @@
     "maxAge" : 0
   },
   "methods" : {
-    "mydailybeat.users.profile.blobkey.retrieve" : {
-      "path" : "users/profile/blobkey/retrieve",
+    "mydailybeat.users.prefs.fling.retrieve" : {
+      "path" : "users/prefs/fling/retrieve",
       "httpMethod" : "GET",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveBlobKeyAndServingURL",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveFlingPrefs",
       "request" : {
         "parameters" : {
           "screen_name" : {
@@ -49,17 +49,129 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.profile.blobkey.save" : {
-      "path" : "users/profile/blobkey/save",
+    "mydailybeat.users.prefs.hobby.save" : {
+      "path" : "users/prefs/hobby/save",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveBlobKeyAndServingURL",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveHobbyPrefs",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.prefs.volunteering.retrieve" : {
+      "path" : "users/prefs/volunteering/retrieve",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveVolunteeringPrefs",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.standard.edit" : {
+      "path" : "users/edit",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.editStandardUser",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.standard.getinfo" : {
+      "path" : "users/getInfo",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getUserInfo",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.groups.blobkey.retrieve" : {
+      "path" : "groups/blobkey/retrieve",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveGroupBlobKeyAndServingURL",
+      "request" : {
+        "parameters" : {
+          "id" : {
+            "type" : "int32",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.prefs.hobby.retrieve" : {
+      "path" : "users/prefs/hobby/retrieve",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveHobbyPrefs",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -86,26 +198,17 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.fling.retrieve" : {
-      "path" : "users/prefs/fling/retrieve",
-      "httpMethod" : "GET",
+    "mydailybeat.groups.blobkey.save" : {
+      "path" : "groups/blobkey/save",
+      "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveFlingPrefs",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveGroupBlobKeyAndServingURL",
       "request" : {
-        "parameters" : {
-          "screen_name" : {
-            "type" : "string",
-            "required" : true
-          },
-          "password" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -127,17 +230,42 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.hobby.save" : {
-      "path" : "users/prefs/hobby/save",
+    "mydailybeat.groups.post" : {
+      "path" : "groups/post",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveHobbyPrefs",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.writePost",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.profile.blobkey.retrieve" : {
+      "path" : "users/profile/blobkey/retrieve",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveProfileBlobKeyAndServingURL",
+      "request" : {
+        "parameters" : {
+          "screen_name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "password" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -154,6 +282,27 @@
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.groups.posts.get" : {
+      "path" : "groups/posts/get",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getPostsForGroupWithId",
+      "request" : {
+        "parameters" : {
+          "id" : {
+            "type" : "int32",
+            "required" : true
+          }
+        },
+        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -224,26 +373,17 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.volunteering.retrieve" : {
-      "path" : "users/prefs/volunteering/retrieve",
-      "httpMethod" : "GET",
+    "mydailybeat.users.profile.blobkey.save" : {
+      "path" : "users/profile/blobkey/save",
+      "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveVolunteeringPrefs",
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveProfileBlobKeyAndServingURL",
       "request" : {
-        "parameters" : {
-          "screen_name" : {
-            "type" : "string",
-            "required" : true
-          },
-          "password" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -337,31 +477,6 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.standard.getinfo" : {
-      "path" : "users/getInfo",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.getUserInfo",
-      "request" : {
-        "parameters" : {
-          "screen_name" : {
-            "type" : "string",
-            "required" : true
-          },
-          "password" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "mydailybeat.groups.create" : {
       "path" : "groups/create",
       "httpMethod" : "POST",
@@ -373,31 +488,6 @@
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "mydailybeat.users.prefs.hobby.retrieve" : {
-      "path" : "users/prefs/hobby/retrieve",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.retrieveHobbyPrefs",
-      "request" : {
-        "parameters" : {
-          "screen_name" : {
-            "type" : "string",
-            "required" : true
-          },
-          "password" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -422,64 +512,6 @@
   },
   "descriptor" : {
     "schemas" : {
-      "PictureUploadData" : {
-        "id" : "PictureUploadData",
-        "type" : "object",
-        "properties" : {
-          "screenName" : {
-            "type" : "string"
-          },
-          "password" : {
-            "type" : "string"
-          },
-          "blobKey" : {
-            "type" : "string"
-          },
-          "servingURL" : {
-            "type" : "string"
-          }
-        }
-      },
-      "BooleanResponse" : {
-        "id" : "BooleanResponse",
-        "type" : "object",
-        "properties" : {
-          "response" : {
-            "type" : "string"
-          }
-        }
-      },
-      "VerveStandardUser" : {
-        "id" : "VerveStandardUser",
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "email" : {
-            "type" : "string"
-          },
-          "password" : {
-            "type" : "string"
-          },
-          "screenName" : {
-            "type" : "string"
-          },
-          "mobile" : {
-            "type" : "string"
-          },
-          "zipcode" : {
-            "type" : "string"
-          },
-          "birth_month" : {
-            "type" : "string"
-          },
-          "birth_year" : {
-            "type" : "string",
-            "format" : "int64"
-          }
-        }
-      },
       "PrefsList" : {
         "id" : "PrefsList",
         "type" : "object",
@@ -526,6 +558,138 @@
           }
         }
       },
+      "BooleanResponse" : {
+        "id" : "BooleanResponse",
+        "type" : "object",
+        "properties" : {
+          "response" : {
+            "type" : "string"
+          }
+        }
+      },
+      "VerveStandardUser" : {
+        "id" : "VerveStandardUser",
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "screenName" : {
+            "type" : "string"
+          },
+          "mobile" : {
+            "type" : "string"
+          },
+          "zipcode" : {
+            "type" : "string"
+          },
+          "birth_month" : {
+            "type" : "string"
+          },
+          "birth_year" : {
+            "type" : "string",
+            "format" : "int64"
+          }
+        }
+      },
+      "GroupPictureUploadData" : {
+        "id" : "GroupPictureUploadData",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "blobKey" : {
+            "type" : "string"
+          },
+          "servingURL" : {
+            "type" : "string"
+          }
+        }
+      },
+      "WritePostRequestObject" : {
+        "id" : "WritePostRequestObject",
+        "type" : "object",
+        "properties" : {
+          "postText" : {
+            "type" : "string"
+          },
+          "blobKey" : {
+            "type" : "string"
+          },
+          "servingURL" : {
+            "type" : "string"
+          },
+          "userScreenName" : {
+            "type" : "string"
+          },
+          "when" : {
+            "type" : "string",
+            "format" : "int64"
+          },
+          "id" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "ProfilePictureUploadData" : {
+        "id" : "ProfilePictureUploadData",
+        "type" : "object",
+        "properties" : {
+          "screenName" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "blobKey" : {
+            "type" : "string"
+          },
+          "servingURL" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Post" : {
+        "id" : "Post",
+        "type" : "object",
+        "properties" : {
+          "postText" : {
+            "type" : "string"
+          },
+          "blobKey" : {
+            "type" : "string"
+          },
+          "servingURL" : {
+            "type" : "string"
+          },
+          "userScreenName" : {
+            "type" : "string"
+          },
+          "when" : {
+            "type" : "string",
+            "format" : "int64"
+          }
+        }
+      },
+      "PostCollection" : {
+        "id" : "PostCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Post"
+            }
+          }
+        }
+      },
       "StringResponse" : {
         "id" : "StringResponse",
         "type" : "object",
@@ -547,6 +711,18 @@
           },
           "id" : {
             "type" : "integer"
+          },
+          "posts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "Post"
+            }
+          },
+          "blobKey" : {
+            "type" : "string"
+          },
+          "servingURL" : {
+            "type" : "string"
           }
         }
       },
@@ -594,35 +770,9 @@
       }
     },
     "methods" : {
-      "com.verve.api.MyDailyBeatAPI.retrieveBlobKeyAndServingURL" : {
-        "response" : {
-          "$ref" : "PictureUploadData"
-        }
-      },
-      "com.verve.api.MyDailyBeatAPI.saveBlobKeyAndServingURL" : {
-        "request" : {
-          "$ref" : "PictureUploadData"
-        },
-        "response" : {
-          "$ref" : "BooleanResponse"
-        }
-      },
-      "com.verve.api.MyDailyBeatAPI.verifyUserInfo" : {
-        "response" : {
-          "$ref" : "VerveStandardUser"
-        }
-      },
       "com.verve.api.MyDailyBeatAPI.retrieveFlingPrefs" : {
         "response" : {
           "$ref" : "PrefsList"
-        }
-      },
-      "com.verve.api.MyDailyBeatAPI.saveRelationshipPrefs" : {
-        "request" : {
-          "$ref" : "PrefsList"
-        },
-        "response" : {
-          "$ref" : "BooleanResponse"
         }
       },
       "com.verve.api.MyDailyBeatAPI.saveHobbyPrefs" : {
@@ -633,12 +783,79 @@
           "$ref" : "BooleanResponse"
         }
       },
+      "com.verve.api.MyDailyBeatAPI.retrieveVolunteeringPrefs" : {
+        "response" : {
+          "$ref" : "CheckBoxPreference"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.editStandardUser" : {
+        "request" : {
+          "$ref" : "VerveStandardUser"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.getUserInfo" : {
+        "response" : {
+          "$ref" : "VerveStandardUser"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.retrieveGroupBlobKeyAndServingURL" : {
+        "response" : {
+          "$ref" : "GroupPictureUploadData"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.retrieveHobbyPrefs" : {
+        "response" : {
+          "$ref" : "CheckBoxPreference"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.verifyUserInfo" : {
+        "response" : {
+          "$ref" : "VerveStandardUser"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.saveGroupBlobKeyAndServingURL" : {
+        "request" : {
+          "$ref" : "GroupPictureUploadData"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.saveRelationshipPrefs" : {
+        "request" : {
+          "$ref" : "PrefsList"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.writePost" : {
+        "request" : {
+          "$ref" : "WritePostRequestObject"
+        },
+        "response" : {
+          "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.retrieveProfileBlobKeyAndServingURL" : {
+        "response" : {
+          "$ref" : "ProfilePictureUploadData"
+        }
+      },
       "com.verve.api.MyDailyBeatAPI.createStandardUser" : {
         "request" : {
           "$ref" : "VerveStandardUser"
         },
         "response" : {
           "$ref" : "BooleanResponse"
+        }
+      },
+      "com.verve.api.MyDailyBeatAPI.getPostsForGroupWithId" : {
+        "response" : {
+          "$ref" : "PostCollection"
         }
       },
       "com.verve.api.MyDailyBeatAPI.retrieveSocialPrefs" : {
@@ -656,9 +873,12 @@
           "$ref" : "GroupCollection"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.retrieveVolunteeringPrefs" : {
+      "com.verve.api.MyDailyBeatAPI.saveProfileBlobKeyAndServingURL" : {
+        "request" : {
+          "$ref" : "ProfilePictureUploadData"
+        },
         "response" : {
-          "$ref" : "CheckBoxPreference"
+          "$ref" : "BooleanResponse"
         }
       },
       "com.verve.api.MyDailyBeatAPI.retrieveRelationshipPrefs" : {
@@ -695,22 +915,12 @@
           "$ref" : "BooleanResponse"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.getUserInfo" : {
-        "response" : {
-          "$ref" : "VerveStandardUser"
-        }
-      },
       "com.verve.api.MyDailyBeatAPI.createGroup" : {
         "request" : {
           "$ref" : "CreateGroupPostObject"
         },
         "response" : {
           "$ref" : "BooleanResponse"
-        }
-      },
-      "com.verve.api.MyDailyBeatAPI.retrieveHobbyPrefs" : {
-        "response" : {
-          "$ref" : "CheckBoxPreference"
         }
       },
       "com.verve.api.MyDailyBeatAPI.saveSocialPrefs" : {

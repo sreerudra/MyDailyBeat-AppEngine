@@ -1,6 +1,6 @@
 package com.verve.api;
 
-public class PictureUploadData {
+public class ProfilePictureUploadData {
 	
 	public String screenName, password, blobKey, servingURL;
 
@@ -12,7 +12,7 @@ public class PictureUploadData {
 		this.screenName = screenName;
 	}
 
-	public PictureUploadData() {
+	public ProfilePictureUploadData() {
 	}
 
 	public String getPassword() {

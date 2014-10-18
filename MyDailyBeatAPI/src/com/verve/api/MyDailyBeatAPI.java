@@ -68,7 +68,12 @@ public class MyDailyBeatAPI {
 		
 		for (int i = 0 ; i < list.size() ; i++) {
 			if (((String) list.get(i).getProperty("groupName")).equalsIgnoreCase(postObj.groupName)) {
-				groups.add((int) (((Long) list.get(i).getProperty("id")).longValue()));
+				if (!groups.contains((int) (((Long) list.get(i).getProperty("id")).longValue()))) {
+					groups.add((int) (((Long) list.get(i).getProperty("id")).longValue()));
+				} else {
+					return BooleanResponse.createResponse(false, "Already a member of this group");
+				}
+				
 			}
 		}
 		
@@ -87,6 +92,23 @@ public class MyDailyBeatAPI {
 		if (list == null) {
 			list = new ArrayList<EmbeddedEntity>();
 			groupsList.setProperty("max_id", Group.ID_START);
+		}
+		Query q2 = new Query("StandardUser").addFilter("screenName",
+				Query.FilterOperator.EQUAL, postObj.screenName).addFilter("password",
+				Query.FilterOperator.EQUAL, postObj.password);
+		List<Entity> results = datastore.prepare(q2).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity s = results.get(0);
+		ArrayList<Integer> groups = (ArrayList<Integer>) s.getProperty("groups");
+		
+		if (groups == null) {
+			groups = new ArrayList<Integer>();
+		}
+		
+		for (int i = 0 ; i < list.size() ; i++) {
+			if (((String) list.get(i).getProperty("groupName")).equalsIgnoreCase(postObj.groupName)) {
+				return BooleanResponse.createResponse(false, "Group already exists");
+			}
 		}
 		Group g = new Group(postObj.groupName, postObj.screenName);
 		EmbeddedEntity newGroup = new EmbeddedEntity();
@@ -119,7 +141,7 @@ public class MyDailyBeatAPI {
 				Long value1 = (Long) list.get(j).getProperty("id");
 				Long value2 = groups.get(i).longValue();
 				if ( value1.equals(value2)) {
-					Group g  = new Group((String) list.get(j).getProperty("groupName"),(String) list.get(j).getProperty("adminScreenName"),(int) (((Long) list.get(j).getProperty("id")).longValue()));
+					Group g  = new Group((String) list.get(j).getProperty("groupName"),(String) list.get(j).getProperty("adminScreenName"),(int) (((Long) list.get(j).getProperty("id")).longValue()), (ArrayList<Post>) list.get(j).getProperty("posts"), (String) list.get(j).getProperty("blobKey"), (String) list.get(j).getProperty("servingURL"));
 					subList.add(g);
 				}
 			}
@@ -181,6 +203,73 @@ public class MyDailyBeatAPI {
 		} catch (UnsupportedEncodingException e) {
 			return BooleanResponse.createResponse(false);
 		}
+
+		return BooleanResponse.createResponse(true);
+
+	}
+	
+	@ApiMethod(name = "users.standard.edit", path = "users/edit", httpMethod = HttpMethod.POST)
+	public BooleanResponse editStandardUser(VerveStandardUser info) {
+
+		Query q = new Query("StandardUser").addFilter("screenName",
+				Query.FilterOperator.EQUAL, info.screenName).addFilter("password",
+				Query.FilterOperator.EQUAL, info.password);
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity s = results.get(0);
+		s.setProperty("name", info.name);
+		if (!info.email.equalsIgnoreCase((String) s.getProperty("email"))) {
+			s.setProperty("email", info.email);
+			s.setProperty("md5key", Constants.generateMD5(info.email));
+			s.setProperty("verified", Boolean.FALSE);
+		}
+		
+		s.setProperty("mobile", info.mobile);
+		s.setProperty("zipcode", info.zipcode);
+		s.setProperty("birth_month", info.birth_month);
+		s.setProperty("birth_year", info.birth_year);
+		
+
+		try {
+
+			datastore.put(s);
+
+		} catch (Exception e) {
+			return BooleanResponse.createResponse(false);
+		}
+		
+		if (!((Boolean) s.getProperty("verified"))) {
+			Properties props = new Properties();
+			Session session = Session.getDefaultInstance(props, null);
+
+			String md5 = (String) s.getProperty("md5key");
+
+			String msgBody = "Hi "
+					+ info.name
+					+ " !\n\nPlease verify the accuracy of your account information by going to the following link:\n\nhttps://1-dot-mydailybeat-api.appspot.com/_ah/api/mydailybeat/v1/verify?hash="
+					+ md5;
+
+			try {
+				MimeMessage msg = new MimeMessage(session);
+				msg.setFrom(new InternetAddress(Constants.DEV_EMAIL,
+						"MyDailyBeat Admin"));
+				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(
+						info.email, info.name));
+				msg.setSubject(Constants.DO_NOT_REPLY_PREFIX + "Activate your "
+						+ Constants.DOMAIN_URL + " account!");
+				msg.setText(msgBody);
+				Transport.send(msg);
+
+			} catch (AddressException e) {
+				return BooleanResponse.createResponse(false);
+			} catch (MessagingException e) {
+				return BooleanResponse.createResponse(false);
+			} catch (UnsupportedEncodingException e) {
+				return BooleanResponse.createResponse(false);
+			}
+		}
+
+		
 
 		return BooleanResponse.createResponse(true);
 
@@ -572,7 +661,7 @@ public class MyDailyBeatAPI {
 	}
 	
 	@ApiMethod(name = "users.profile.blobkey.save", path = "users/profile/blobkey/save", httpMethod = HttpMethod.POST)
-	public BooleanResponse saveBlobKeyAndServingURL(PictureUploadData picData) {
+	public BooleanResponse saveProfileBlobKeyAndServingURL(ProfilePictureUploadData picData) {
 		Query q = new Query("StandardUser").addFilter("screenName",
 				Query.FilterOperator.EQUAL, picData.screenName).addFilter(
 				"password", Query.FilterOperator.EQUAL, picData.password);
@@ -592,7 +681,7 @@ public class MyDailyBeatAPI {
 	}
 	
 	@ApiMethod(name = "users.profile.blobkey.retrieve", path = "users/profile/blobkey/retrieve", httpMethod = HttpMethod.GET)
-	public PictureUploadData retrieveBlobKeyAndServingURL(@Named("screen_name") String screenName,
+	public ProfilePictureUploadData retrieveProfileBlobKeyAndServingURL(@Named("screen_name") String screenName,
 			@Named("password") String password) {
 		Query q = new Query("StandardUser").addFilter("screenName",
 				Query.FilterOperator.EQUAL, screenName).addFilter(
@@ -602,7 +691,7 @@ public class MyDailyBeatAPI {
 		Entity s = results.get(0);
 		
 		EmbeddedEntity pictureData = (EmbeddedEntity) s.getProperty("Profile Picture Data");
-		PictureUploadData data  = new PictureUploadData();
+		ProfilePictureUploadData data  = new ProfilePictureUploadData();
 		data.screenName = screenName;
 		data.password = password;
 		
@@ -611,5 +700,113 @@ public class MyDailyBeatAPI {
 		
 		return data;
 	}
+	
+	@ApiMethod(name = "groups.blobkey.save", path = "groups/blobkey/save", httpMethod = HttpMethod.POST)
+	public BooleanResponse saveGroupBlobKeyAndServingURL(GroupPictureUploadData picData) {
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
+		EmbeddedEntity e = new EmbeddedEntity();
+		int index = 0;
+		for (int i = 0 ; i < list.size() ; ++i) {
+			EmbeddedEntity e1 = list.get(i);
+			if (picData.id == ((Long) e1.getProperty("id"))
+					.intValue()) {
+				e = e1;
+				index = i;
+				break;
+			}
+		}
+		
+		EmbeddedEntity pictureData = new EmbeddedEntity();
+		pictureData.setProperty("blobKey", picData.blobKey);
+		pictureData.setProperty("servingURL", picData.servingURL);
+		
+		e.setProperty("Picture Data", pictureData);
+		
+		list.set(index, e);
+		groupsList.setProperty("list", list);
+		datastore.put(groupsList);
 
+		return BooleanResponse.createResponse(true);
+	}
+	
+	@ApiMethod(name = "groups.blobkey.retrieve", path = "groups/blobkey/retrieve", httpMethod = HttpMethod.GET)
+	public GroupPictureUploadData retrieveGroupBlobKeyAndServingURL(@Named("id") int id) {
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
+		EmbeddedEntity e = new EmbeddedEntity();
+		for (int i = 0 ; i < list.size() ; ++i) {
+			EmbeddedEntity e1 = list.get(i);
+			if (id == ((Long) e1.getProperty("id"))
+					.intValue()) {
+				e = e1;
+				break;
+			}
+		}
+		
+		EmbeddedEntity pictureData = (EmbeddedEntity) e.getProperty("Picture Data");
+		GroupPictureUploadData data  = new GroupPictureUploadData();
+		
+		data.id = id;
+		data.blobKey = (String) pictureData.getProperty("blobKey");
+		data.servingURL = (String) pictureData.getProperty("servingURL");
+		
+		return data;
+	}
+	
+	@ApiMethod(name = "groups.post", path="groups/post", httpMethod = HttpMethod.POST)
+	public BooleanResponse writePost(WritePostRequestObject obj) {
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
+		EmbeddedEntity e = new EmbeddedEntity();
+		int index = 0;
+		for (int i = 0 ; i < list.size() ; ++i) {
+			EmbeddedEntity e1 = list.get(i);
+			if (obj.id == ((Long) e1.getProperty("id"))
+					.intValue()) {
+				e = e1;
+				index = i;
+				break;
+			}
+		}
+		
+		ArrayList<Post> posts = (ArrayList<Post>) e.getProperty("posts");
+		if (posts == null) {
+			posts = new ArrayList<Post>();
+		}
+		posts.add(new Post(obj.postText, obj.blobKey, obj.servingURL, obj.userScreenName, obj.when));
+		
+		e.setProperty("posts", posts);
+		list.set(index, e);
+		groupsList.setProperty("list", list);
+		datastore.put(groupsList);
+
+		return BooleanResponse.createResponse(true);
+		
+		
+	}
+	
+	@ApiMethod(name = "groups.posts.get", path = "groups/posts/get", httpMethod = HttpMethod.GET)
+	public ArrayList<Post> getPostsForGroupWithId(@Named("id") int id) {
+		Query q2 = new Query("GroupsList");
+		Entity groupsList = datastore.prepare(q2).asSingleEntity();
+		ArrayList<EmbeddedEntity> list = (ArrayList<EmbeddedEntity>) groupsList.getProperty("list");
+		EmbeddedEntity e = new EmbeddedEntity();
+		int index = 0;
+		for (int i = 0 ; i < list.size() ; ++i) {
+			EmbeddedEntity e1 = list.get(i);
+			if (id == ((Long) e1.getProperty("id"))
+					.intValue()) {
+				e = e1;
+				index = i;
+				break;
+			}
+		}
+		
+		ArrayList<Post> posts = (ArrayList<Post>) e.getProperty("posts");
+		return posts;
+	}
 }
