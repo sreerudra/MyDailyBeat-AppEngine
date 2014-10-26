@@ -8,7 +8,9 @@ public class Constants {
 	
 	public static final String DO_NOT_REPLY_PREFIX = "DO NOT REPLY: ";
 	public static final String DOMAIN_URL = "mydailybeat.com";
-	public static final String DEV_EMAIL = "virinchi.balabhadrapatruni@gmail.com";
+	public static final String DEV_EMAIL = "evervecorp@gmail.com";
+	public static final String DEV_PASS = "VerveIsLife";
+	public static final String DEV_NUMBER = "1 201-354-5720";
 	
 	public static String generateMD5(String to_be_md5) {
 	    String md5_sum = "";
