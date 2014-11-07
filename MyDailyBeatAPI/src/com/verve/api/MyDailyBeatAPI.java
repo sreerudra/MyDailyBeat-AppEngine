@@ -20,6 +20,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.Named;
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -29,6 +30,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 @Api(name = "mydailybeat", version = "v1")
 public class MyDailyBeatAPI {
@@ -47,7 +49,8 @@ public class MyDailyBeatAPI {
 				FetchOptions.Builder.withDefaults());
 		Entity s = results.get(0);
 		Query q2 = new Query("GroupsList");
-		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(
+				FetchOptions.Builder.withDefaults());
 		ArrayList<Integer> groups = (ArrayList<Integer>) s
 				.getProperty("groups");
 
@@ -58,10 +61,10 @@ public class MyDailyBeatAPI {
 		for (int i = 0; i < groupsList.size(); i++) {
 			if (((String) groupsList.get(i).getProperty("groupName"))
 					.equalsIgnoreCase(postObj.groupName)) {
-				if (!groups.contains((int) (((Long) groupsList.get(i).getProperty(
-						"id")).longValue()))) {
-					groups.add((int) (((Long) groupsList.get(i).getProperty("id"))
-							.longValue()));
+				if (!groups.contains((int) (((Long) groupsList.get(i)
+						.getProperty("id")).longValue()))) {
+					groups.add((int) (((Long) groupsList.get(i).getProperty(
+							"id")).longValue()));
 				} else {
 					return BooleanResponse.createResponse(false,
 							"Already a member of this group");
@@ -79,23 +82,24 @@ public class MyDailyBeatAPI {
 	@ApiMethod(name = "groups.create", path = "groups/create", httpMethod = HttpMethod.POST)
 	public BooleanResponse createGroup(CreateGroupPostObject postObj) {
 		Query q = new Query("GroupsList");
-		List<Entity> groupsList = (List<Entity>) datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> groupsList = (List<Entity>) datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
 		if (groupsList == null) {
 			groupsList = new ArrayList<Entity>();
 		}
-		
+
 		if (groupsList.size() > 0) {
 			ArrayList<Integer> idList = new ArrayList<Integer>();
-			for (int i = 0 ; i < groupsList.size() ; ++i) {
+			for (int i = 0; i < groupsList.size(); ++i) {
 				idList.add((int) (((Long) groupsList.get(i).getProperty("id"))
 						.longValue()));
 			}
 			Collections.sort(idList);
-			Group.ID_START = idList.get(idList.size()-1);
+			Group.ID_START = idList.get(idList.size() - 1);
 		} else {
 			Group.ID_START = 0;
 		}
-		
+
 		Query q2 = new Query("StandardUser").addFilter("screenName",
 				Query.FilterOperator.EQUAL, postObj.screenName).addFilter(
 				"password", Query.FilterOperator.EQUAL, postObj.password);
@@ -139,7 +143,8 @@ public class MyDailyBeatAPI {
 		Entity s = results.get(0);
 		ArrayList<Long> groups = (ArrayList<Long>) s.getProperty("groups");
 		Query q2 = new Query("GroupsList");
-		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(
+				FetchOptions.Builder.withDefaults());
 		ArrayList<Group> subList = new ArrayList<Group>();
 		for (int i = 0; i < groups.size(); i++) {
 			for (int j = 0; j < groupsList.size(); j++) {
@@ -147,11 +152,13 @@ public class MyDailyBeatAPI {
 				Long value2 = groups.get(i).longValue();
 				if (value1.equals(value2)) {
 					Group g = new Group((String) groupsList.get(j).getProperty(
-							"groupName"), (String) groupsList.get(j).getProperty(
-							"adminScreenName"), (int) (((Long) groupsList.get(j)
-							.getProperty("id")).longValue()), (String) groupsList
-							.get(j).getProperty("blobKey"), (String) groupsList
-							.get(j).getProperty("servingURL"));
+							"groupName"), (String) groupsList.get(j)
+							.getProperty("adminScreenName"),
+							(int) (((Long) groupsList.get(j).getProperty("id"))
+									.longValue()), (String) groupsList.get(j)
+									.getProperty("blobKey"),
+							(String) groupsList.get(j)
+									.getProperty("servingURL"));
 					subList.add(g);
 				}
 			}
@@ -707,7 +714,6 @@ public class MyDailyBeatAPI {
 			data.blobKey = (String) pictureData.getProperty("blobKey");
 			data.servingURL = (String) pictureData.getProperty("servingURL");
 		}
-		
 
 		return data;
 	}
@@ -716,7 +722,8 @@ public class MyDailyBeatAPI {
 	public BooleanResponse saveGroupBlobKeyAndServingURL(
 			GroupPictureUploadData picData) {
 		Query q2 = new Query("GroupsList");
-		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(
+				FetchOptions.Builder.withDefaults());
 		Entity e = new Entity("GroupsList");
 		for (int i = 0; i < groupsList.size(); ++i) {
 			Entity e1 = groupsList.get(i);
@@ -741,7 +748,8 @@ public class MyDailyBeatAPI {
 	public GroupPictureUploadData retrieveGroupBlobKeyAndServingURL(
 			@Named("id") int id) {
 		Query q2 = new Query("GroupsList");
-		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> groupsList = (List<Entity>) datastore.prepare(q2).asList(
+				FetchOptions.Builder.withDefaults());
 		Entity e = new Entity("GroupsList");
 		for (int i = 0; i < groupsList.size(); ++i) {
 			Entity e1 = groupsList.get(i);
@@ -768,19 +776,20 @@ public class MyDailyBeatAPI {
 	@ApiMethod(name = "groups.post", path = "groups/post", httpMethod = HttpMethod.POST)
 	public BooleanResponse writePost(WritePostRequestObject obj) {
 		Query q = new Query("Post");
-		List<Entity> postList = (List<Entity>) datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> postList = (List<Entity>) datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
 		if (postList == null) {
 			postList = new ArrayList<Entity>();
 		}
-		
+
 		if (postList.size() > 0) {
 			ArrayList<Integer> idList = new ArrayList<Integer>();
-			for (int i = 0 ; i < postList.size() ; ++i) {
-				idList.add((int) (((Long) postList.get(i).getProperty("post_id"))
-						.longValue()));
+			for (int i = 0; i < postList.size(); ++i) {
+				idList.add((int) (((Long) postList.get(i)
+						.getProperty("post_id")).longValue()));
 			}
 			Collections.sort(idList);
-			Post.ID_START = idList.get(idList.size()-1);
+			Post.ID_START = idList.get(idList.size() - 1);
 		} else {
 			Post.ID_START = 0;
 		}
@@ -827,7 +836,131 @@ public class MyDailyBeatAPI {
 					((Long) post.getProperty("when")).intValue());
 			posts.add(p);
 		}
-		
+
 		return posts;
 	}
+
+	@ApiMethod(name = "groups.posts.delete", path = "groups/posts/delete", httpMethod = HttpMethod.GET)
+	public BooleanResponse deletePost(@Named("id") int id) {
+		Query q = new Query("PostList").addFilter("post_id",
+				Query.FilterOperator.EQUAL, id);
+		Entity e = datastore.prepare(q).asSingleEntity();
+		datastore.delete(e.getKey());
+		Query q2 = new Query("Post").addFilter("post_id", FilterOperator.EQUAL,
+				id);
+		Entity post = datastore.prepare(q2).asSingleEntity();
+		if (post.getProperty("blobKey") != null) {
+			BlobKey imgKey = new BlobKey((String) post.getProperty("blobKey"));
+			blobstore.delete(imgKey);
+		}
+		datastore.delete(post.getKey());
+
+		return BooleanResponse.createResponse(true);
+	}
+
+	@ApiMethod(name = "groups.delete", path = "groups/delete", httpMethod = HttpMethod.GET)
+	public BooleanResponse deleteGroup(@Named("id") int id) {
+		Query groupsQuery = new Query("GroupsList").addFilter("id",
+				FilterOperator.EQUAL, id);
+		Entity group = datastore.prepare(groupsQuery).asSingleEntity();
+		EmbeddedEntity pictureData = (EmbeddedEntity) group
+				.getProperty("Picture Data");
+		if (pictureData != null) {
+			BlobKey imgKey = new BlobKey(
+					(String) pictureData.getProperty("blobKey"));
+			blobstore.delete(imgKey);
+		}
+		datastore.delete(group.getKey());
+
+		Query usersQuery = new Query("StandardUser");
+		List<Entity> users = (List<Entity>) datastore.prepare(usersQuery)
+				.asList(FetchOptions.Builder.withDefaults());
+
+		for (Entity s : users) {
+			ArrayList<Long> groups = (ArrayList<Long>) s.getProperty("groups");
+			Long group_id = new Long(id);
+			int index = Collections.binarySearch(groups, group_id);
+			if (index >= 0) {
+				groups.remove(index);
+			} else {
+				return BooleanResponse.createResponse(false);
+			}
+			s.setProperty("groups", groups);
+			datastore.put(s);
+		}
+		
+		Query q2 = new Query("PostList").addFilter("group_id",
+				Query.FilterOperator.EQUAL, id);
+		List<Entity> it = datastore.prepare(q2).asList(FetchOptions.Builder.withDefaults());
+		for (Entity post : it) {
+			int post_id = ((Long) post.getProperty("post_id")).intValue();
+			this.deletePost(post_id);
+		}
+
+		return BooleanResponse.createResponse(true);
+	}
+	
+	@ApiMethod(name = "users.search.screenname", path = "users/search/screenName", httpMethod = HttpMethod.GET)
+	public List<VerveStandardUser> getUsersWithScreenNameContainingString(@Named("query") String screenName, @Named("sort_order") int sort_order) {
+		Query q;
+		if (sort_order == 0) {
+			q = new Query("StandardUser").addSort("screenName", SortDirection.ASCENDING);
+		} else {
+			q = new Query("StandardUser").addSort("screenName", SortDirection.DESCENDING);
+		}
+		
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		ArrayList<VerveStandardUser> users = new ArrayList<VerveStandardUser>();
+		for (Entity entry : results) {
+			if (((String) entry.getProperty("screenName")).toLowerCase().contains(screenName.toLowerCase())) {
+				users.add(this.getUserInfo(((String) entry.getProperty("screenName")), ((String) entry.getProperty("password"))));
+			}
+		}
+		
+		return users;
+	}
+	
+	@ApiMethod(name = "users.search.name", path = "users/search/name", httpMethod = HttpMethod.GET)
+	public List<VerveStandardUser> getUsersWithNameContainingString(@Named("query") String name, @Named("sort_order") int sort_order) {
+		Query q;
+		if (sort_order == 0) {
+			q = new Query("StandardUser").addSort("name", SortDirection.ASCENDING);
+		} else {
+			q = new Query("StandardUser").addSort("name", SortDirection.DESCENDING);
+		}
+		
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		ArrayList<VerveStandardUser> users = new ArrayList<VerveStandardUser>();
+		for (Entity entry : results) {
+			if (((String) entry.getProperty("name")).toLowerCase().contains(name.toLowerCase())) {
+				users.add(this.getUserInfo(((String) entry.getProperty("screenName")), ((String) entry.getProperty("password"))));
+			}
+		}
+		
+		return users;
+	}
+	
+	@ApiMethod(name = "users.search.email", path = "users/search/email", httpMethod = HttpMethod.GET)
+	public List<VerveStandardUser> getUsersWithEmailContainingString(@Named("query") String email, @Named("sort_order") int sort_order) {
+		Query q;
+		if (sort_order == 0) {
+			q = new Query("StandardUser").addSort("email", SortDirection.ASCENDING);
+		} else {
+			q = new Query("StandardUser").addSort("email", SortDirection.DESCENDING);
+		}
+		
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		ArrayList<VerveStandardUser> users = new ArrayList<VerveStandardUser>();
+		for (Entity entry : results) {
+			if (((String) entry.getProperty("email")).toLowerCase().contains(email.toLowerCase())) {
+				users.add(this.getUserInfo(((String) entry.getProperty("screenName")), ((String) entry.getProperty("password"))));
+			}
+		}
+		
+		return users;
+	}
+	
 }
