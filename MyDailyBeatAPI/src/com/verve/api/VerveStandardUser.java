@@ -1,6 +1,5 @@
 package com.verve.api;
 
-import java.util.ArrayList;
 
 public class VerveStandardUser {
 	

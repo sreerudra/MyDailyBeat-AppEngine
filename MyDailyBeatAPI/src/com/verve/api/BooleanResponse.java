@@ -17,6 +17,14 @@ public class BooleanResponse {
 		return BooleanResponse.createResponse(r, "");
 	}
 	
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	public static BooleanResponse createResponse(boolean r, String message) {
 		BooleanResponse b = new BooleanResponse();
 		b.response = (r) ? "Operation succeeded" : "Operation Failed";

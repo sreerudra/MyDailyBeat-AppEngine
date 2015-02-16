@@ -9,8 +9,10 @@ public class Constants {
 	public static final String DO_NOT_REPLY_PREFIX = "DO NOT REPLY: ";
 	public static final String DOMAIN_URL = "mydailybeat.com";
 	public static final String DEV_EMAIL = "evervecorp@gmail.com";
-	public static final String DEV_PASS = "VerveIsLife";
-	public static final String DEV_NUMBER = "1 201-354-5720";
+	public static final String DEV_PASS = "Verve1sLife";
+	public static final String DEV_NUMBER = "+12013545720";
+	public static final String DEV_SID = "AC30ba74806ea7f7c244afa4f5099d968c";
+	public static final String DEV_AUTHTKN = "254e3747b67e2f47eb5a4e6d53c587ce";
 	
 	public static String generateMD5(String to_be_md5) {
 	    String md5_sum = "";
