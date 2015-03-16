@@ -218,15 +218,18 @@ public class MyDailyBeatAPI {
 			msg.setText(msgBody);
 			Transport.send(msg);
 
+			return this.sendTextToUser(info.screenName);
 		} catch (AddressException e) {
 			return BooleanResponse.createResponse(false);
 		} catch (MessagingException e) {
 			return BooleanResponse.createResponse(false);
 		} catch (UnsupportedEncodingException e) {
 			return BooleanResponse.createResponse(false);
+		} catch (Exception e) {
+			return BooleanResponse.createResponse(false);
 		}
 
-		return BooleanResponse.createResponse(true);
+		
 
 	}
 
@@ -397,16 +400,27 @@ public class MyDailyBeatAPI {
 
 	}
 
-	@ApiMethod(name = "sendTextTest", path = "sendText", httpMethod = HttpMethod.GET)
+	@SuppressWarnings("deprecation")
+	@ApiMethod(name = "users.standard.create.sendVerification", path = "users/create/sendText", httpMethod = HttpMethod.GET)
 	public BooleanResponse sendTextToUser(
 			@Named("screen_name") String screenName) throws Exception {
 
 		VerveStandardUser user = this
 				.getUserInfoForUserWithScreenName(screenName);
+		Query q = new Query("StandardUser").addFilter("screenName",
+				Query.FilterOperator.EQUAL, screenName);
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity s = results.get(0);
+		String md5 = (String) s.getProperty("md5key");
+		String link = "http://mydailybeat.com/verify/verify.html";
 		try {
 
-			String message = "Hello World!";
-			message = URLEncoder.encode(message);
+			String msgBody = "Hi "
+					+ user.name
+					+ "!\nPlease verify the accuracy of your account information by going to:\n" + link + "\nand entering the following code:\n"
+					+ md5;
+			msgBody = URLEncoder.encode(msgBody);
 			String authString = Constants.DEV_SID + ":" + Constants.DEV_AUTHTKN;
 			System.out.println("auth string: " + authString);
 			byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
@@ -431,7 +445,7 @@ public class MyDailyBeatAPI {
 
 			// this is your data that you're sending to the server!
 			writer.write("From=" + Constants.DEV_NUMBER + "&To=+1"
-					+ user.mobile + "&Body=" + message);
+					+ user.mobile + "&Body=" + msgBody);
 
 			writer.close();
 
@@ -1534,7 +1548,16 @@ public class MyDailyBeatAPI {
 
 	@ApiMethod(name = "fling.profile.save", path = "fling/profile/save", httpMethod = HttpMethod.POST)
 	public BooleanResponse saveFlingProfileForUser(FlingProfile f) {
-		Entity e = new Entity("FlingProfile");
+		Query q = new Query("FlingProfile").addFilter("screenName",
+				Query.FilterOperator.EQUAL, f.screenName);
+		List<Entity> results = datastore.prepare(q).asList(
+				FetchOptions.Builder.withDefaults());
+		Entity e;
+		if (results.size() == 0) {
+			e = new Entity("FlingProfile");
+		} else {
+			e = results.get(0);
+		}
 		e.setProperty("screenName", f.screenName);
 		e.setProperty("aboutMe", f.aboutMe);
 		e.setProperty("age", f.age);
