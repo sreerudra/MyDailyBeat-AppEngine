@@ -162,8 +162,8 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.sendTextTest" : {
-      "path" : "sendText",
+    "mydailybeat.users.standard.create.sendVerification" : {
+      "path" : "users/create/sendText",
       "httpMethod" : "GET",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
