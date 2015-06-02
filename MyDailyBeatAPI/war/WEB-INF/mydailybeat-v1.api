@@ -966,22 +966,6 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "mydailybeat.users.prefs.fling.save" : {
-      "path" : "users/prefs/fling/save",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveFlingPrefs",
-      "request" : {
-        "body" : "autoTemplate(backendRequest)",
-        "bodyName" : "resource"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "mydailybeat.users.prefs.volunteering.save" : {
       "path" : "users/prefs/volunteering/save",
       "httpMethod" : "POST",
@@ -990,6 +974,22 @@
       "audiences" : [ ],
       "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
       "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "mydailybeat.users.prefs.fling.save" : {
+      "path" : "users/prefs/fling/save",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.verve.api.MyDailyBeatAPI.saveFlingPrefs",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
@@ -1842,17 +1842,17 @@
           "$ref" : "BooleanResponse"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.saveFlingPrefs" : {
+      "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs" : {
         "request" : {
-          "$ref" : "PrefsList"
+          "$ref" : "CheckBoxPreference"
         },
         "response" : {
           "$ref" : "BooleanResponse"
         }
       },
-      "com.verve.api.MyDailyBeatAPI.saveVolunteeringPrefs" : {
+      "com.verve.api.MyDailyBeatAPI.saveFlingPrefs" : {
         "request" : {
-          "$ref" : "CheckBoxPreference"
+          "$ref" : "PrefsList"
         },
         "response" : {
           "$ref" : "BooleanResponse"
